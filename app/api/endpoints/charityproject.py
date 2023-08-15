@@ -5,9 +5,8 @@ from app.api.validators import check_project_name_duplicate
 from app.core.db import get_async_session
 from app.core.user import current_superuser
 from app.crud.charityproject import charity_crud
-from app.models import CharityProject
 from app.schemas.charityproject import CharityProjectCreate, CharityProjectDB
-from app.services.money_process import money_process
+from app.services.money_process import commit_refresh_db, taking_donations
 
 router = APIRouter()
 
@@ -24,7 +23,10 @@ async def create_charity_project(
 ) -> CharityProjectDB:
     await check_project_name_duplicate(charity_project.name, session)
     charity_project_new = await charity_crud.create(charity_project, session)
-    await money_process(session)
-    await session.refresh(charity_project_new)
+    charity_project_new, donation, session = await taking_donations(
+        charity_project_new, session
+    )
+    charity_project_new, donation = await commit_refresh_db(
+        donation, charity_project_new, session
+    )
     return charity_project_new
-
