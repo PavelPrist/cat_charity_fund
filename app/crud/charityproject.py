@@ -29,15 +29,12 @@ class CharityProjectCRUD(BaseCRUD):
         """
         Поиск первого подходящего проекта для инвестиции согласно FIFO
         """
-        remain_prj = (
-                CharityProject.full_amount - CharityProject.invested_amount
-        )
         charity_projects = await session.execute(
             select(CharityProject).where(
-                remain_prj >= donation.full_amount
+                CharityProject.fully_invested == 0
             )
         )
-        return remain_prj, charity_projects.scalars().first_or_none()
+        return charity_projects.scalars().one_or_none()
 
     async def close_prject(self, charity_project: CharityProject):
         charity_project.invested_amount = charity_project.full_amount

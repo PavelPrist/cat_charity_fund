@@ -17,6 +17,7 @@ class DonationCreate(BaseModel):
 
     class Config:
         extra = Extra.forbid
+        orm_mode = True
 
 
 class DonationDb(DonationCreate):

@@ -8,12 +8,12 @@ from app.models import Donation
 
 
 class DonationCRUD(BaseCRUD):
-    async def first_not_empty_donation(
+    async def not_empty_donations(
             self,
             session: AsyncSession
     ):
         donations = await session.execute(
-            select(Donation).where(Donation.fully_invested is False)
+            select(Donation).where(Donation.fully_invested == 0)
         )
         return donations.scalars().all()
 

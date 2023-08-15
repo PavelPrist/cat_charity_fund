@@ -30,10 +30,10 @@ async def create_donation(
         session,
         user
     )
-    donation, charity_project, session = await donation_distribution(
+    donation_new, charity_project_new, session = await donation_distribution(
         donation, session
     )
-    donation, _ = await commit_refresh_db(
-        donation, charity_project, session
+    donation_end, _ = await commit_refresh_db(
+        session, charity_project=charity_project_new, donation=donation_new
     )
-    return donation
+    return donation_new

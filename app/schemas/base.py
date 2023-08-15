@@ -16,7 +16,7 @@ TO_TIME = (
 class BaseSchema(BaseModel):
     id: int
     full_amount: PositiveInt
-    invested_amount: PositiveInt
+    invested_amount: int = Field(..., ge=0)
     fully_invested: bool
     create_date: datetime = Field(..., example=FROM_TIME)
     close_date: Optional[datetime] = Field(..., example=TO_TIME)

@@ -2,7 +2,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.crud.charityproject import charity_crud
 from app.crud.donation import donation_crud
-from app.models import Donation
+from app.models import CharityProject, Donation
 
 
 async def update_project(charity_project, donation_add):
@@ -19,13 +19,15 @@ async def update_project(charity_project, donation_add):
 async def update_donation_and_project(
         donation,
         charity_project,
-        remain_prj=0,
         remain_donation=0
 ):
     """
     Обновление полей пожертвования(donation) + обновление проекта
     """
-    if donation.full_amount >= remain_prj != 0:
+    remain_prj = (
+            charity_project.full_amount -
+            charity_project.invested_amount)
+    if donation.full_amount >= remain_prj and remain_prj != 0:
         donation.invested_amount = remain_prj
         charity_project = await update_project(charity_project, remain_prj)
     elif (
@@ -60,19 +62,20 @@ async def donation_distribution(
     Распределение пожертвований по проектам
     """
     while True:
-        remain_prj, charity_project = await (
+        charity_project = await (
             charity_crud.first_project_for_investments(
                 donation=donation, session=session
             )
         )
-        if charity_project and donation.fully_invested is not True:
+        if charity_project and donation.fully_invested == 0:
             donation, charity_project = await update_donation_and_project(
-                donation, charity_project, remain_prj=remain_prj
+                donation, charity_project
             )
         else:
             break
     session.add(donation)
-    session.add(charity_project)
+    if charity_project:
+        session.add(charity_project)
     return donation, charity_project, session
 
 
@@ -83,7 +86,7 @@ async def taking_donations(
     """
     Получение пожертвований для проекта
     """
-    donations = await donation_crud.first_not_empty_donation(
+    donations = await donation_crud.not_empty_donations(
         session=session
     )
     for donation in donations:
@@ -97,18 +100,21 @@ async def taking_donations(
         if charity_project.fully_invested is True:
             break
     session.add(charity_project)
-    return charity_project, donation, session
+    return charity_project, session
 
 
 async def commit_refresh_db(
-        charity_project,
-        donation,
-        session: AsyncSession
+        session: AsyncSession,
+        charity_project: CharityProject,
+        donation: Donation
 ):
     """
     Обновление базы данных(donation, charity_project)
     """
+
     await session.commit()
-    await session.refresh(donation)
-    await session.refresh(charity_project)
+    if charity_project:
+        await session.refresh(charity_project)
+    if donation:
+        await session.refresh(donation)
     return charity_project, donation

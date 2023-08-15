@@ -23,10 +23,10 @@ async def create_charity_project(
 ) -> CharityProjectDB:
     await check_project_name_duplicate(charity_project.name, session)
     charity_project_new = await charity_crud.create(charity_project, session)
-    charity_project_new, donation, session = await taking_donations(
+    charity_project_new, session = await taking_donations(
         charity_project_new, session
     )
-    charity_project_new, donation = await commit_refresh_db(
-        donation, charity_project_new, session
+    charity_project_new, _ = await commit_refresh_db(
+        session, charity_project=charity_project_new,
     )
     return charity_project_new
