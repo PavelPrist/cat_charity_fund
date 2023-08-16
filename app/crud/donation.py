@@ -8,23 +8,6 @@ from app.models import Donation
 
 
 class DonationCRUD(BaseCRUD):
-    async def not_empty_donations(
-            self,
-            session: AsyncSession
-    ):
-        donations = await session.execute(
-            select(Donation).where(Donation.fully_invested == 0)
-        )
-        return donations.scalars().all()
-
-    async def close_donation(
-            self,
-            donation: Donation,
-    ):
-        donation.invested_amount = donation.full_amount
-        donation.fully_invested = True
-        donation.close_date = datetime.now()
-        return donation
-
+    pass
 
 donation_crud = DonationCRUD(Donation)

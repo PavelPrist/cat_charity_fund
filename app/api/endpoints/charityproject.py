@@ -6,7 +6,8 @@ from app.core.db import get_async_session
 from app.core.user import current_superuser
 from app.crud.charityproject import charity_crud
 from app.schemas.charityproject import CharityProjectCreate, CharityProjectDB
-from app.services.money_process import commit_refresh_db, taking_donations
+from app.services.money_process import taking_donations
+from app.services.readDB import commit_refresh_db
 
 router = APIRouter()
 
@@ -27,6 +28,6 @@ async def create_charity_project(
         charity_project_new, session
     )
     charity_project_new, _ = await commit_refresh_db(
-        session, charity_project=charity_project_new,
+        session, charity_project=charity_project_new
     )
     return charity_project_new

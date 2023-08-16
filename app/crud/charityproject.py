@@ -21,26 +21,5 @@ class CharityProjectCRUD(BaseCRUD):
         )
         return project_id.scalar_one_or_none()
 
-    async def first_project_for_investments(
-            self,
-            donation: Donation,
-            session: AsyncSession,
-    ):
-        """
-        Поиск первого подходящего проекта для инвестиции согласно FIFO
-        """
-        charity_projects = await session.execute(
-            select(CharityProject).where(
-                CharityProject.fully_invested == 0
-            )
-        )
-        return charity_projects.scalars().one_or_none()
-
-    async def close_prject(self, charity_project: CharityProject):
-        charity_project.invested_amount = charity_project.full_amount
-        charity_project.fully_invested = True
-        charity_project.close_date = datetime.now()
-        return charity_project
-
 
 charity_crud = CharityProjectCRUD(CharityProject)
