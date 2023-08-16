@@ -132,4 +132,4 @@ dmypy.json
 .idea
 
 #DB
-fastapi.db
+/fastapi.db
