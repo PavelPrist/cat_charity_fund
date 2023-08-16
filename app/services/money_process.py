@@ -98,7 +98,6 @@ async def taking_donations(
             donation, charity_project, remain_donation=remain
         )
         session.add(donation)
-        # await session.commit()
         if charity_project.fully_invested is True:
             break
 
