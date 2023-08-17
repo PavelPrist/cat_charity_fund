@@ -46,6 +46,6 @@ def update_obj(obj, invested_add):
     return obj
 
 
-def commit_refresh_db(session: AsyncSession, obj):
-    session.commit()
-    session.refresh(obj)
+async def commit_refresh_db(session: AsyncSession, obj):
+    await session.commit()
+    await session.refresh(obj)
