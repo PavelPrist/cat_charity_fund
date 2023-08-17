@@ -36,27 +36,52 @@ def update_donation_and_project(
         charity_project = update_project(charity_project, remain_prj)
         if donation.invested_amount == donation.full_amount:
             donation = close_donation(donation)
-    elif (
-            remain_donation <= charity_project.full_amount
-            and remain_donation != 0
-    ):
-        charity_project = update_project(
-            charity_project, remain_donation
-        )
-        donation = close_donation(donation)
-    elif (
-            remain_donation >= charity_project.full_amount
-            and remain_donation != 0
-    ):
-        charity_project = update_project(
-            charity_project, remain_donation)
-        donation.invested_amount += (
-                remain_donation - charity_project.full_amount)
+    # elif (
+    #         remain_donation <= charity_project.full_amount
+    #         and remain_donation != 0
+    # ):
+    #     charity_project = update_project(
+    #         charity_project, remain_donation
+    #     )
+    #     donation = close_donation(donation)
+    # elif (
+    #         remain_donation > charity_project.full_amount
+    #         and remain_donation != 0
+    # ):
+    #     charity_project = update_project(
+    #         charity_project, remain_donation)
+    #     donation.invested_amount += (
+    #             remain_donation - charity_project.full_amount)
     else:
         donation = close_donation(donation)
         charity_project = update_project(
             charity_project, donation.full_amount
         )
+    return donation, charity_project
+
+
+
+def update_project_from_donation(
+        donation,
+        charity_project
+):
+    """
+    Функция обновления объектов, когда приходит новый донат
+    """
+    remain_prj = (
+            charity_project.full_amount -
+            charity_project.invested_amount)
+    if remain_prj >= donation.full_amount:
+        charity_project = update_project(
+            charity_project, remain_prj
+        )
+        donation = close_donation(donation)
+    else:
+        charity_project = update_project(
+            charity_project, remain_prj)
+        donation.invested_amount += (
+                remain_prj - charity_project.full_amount)
+
     return donation, charity_project
 
 
@@ -83,6 +108,28 @@ async def donation_distribution(
     return donation, charity_project, session
 
 
+def update_donation_for_project(
+        donation,
+        charity_project,
+        remain_donation
+):
+    """
+    Функция обновления объектов, когда создается новый проект
+    """
+    if remain_donation <= charity_project.full_amount:
+        charity_project = update_project(
+            charity_project, remain_donation
+        )
+        donation = close_donation(donation)
+    else:
+        charity_project = update_project(
+            charity_project, remain_donation)
+        donation.invested_amount += (
+                remain_donation - charity_project.full_amount
+        )
+    return donation, charity_project
+
+
 async def taking_donations(
         charity_project: CharityProject,
         session: AsyncSession
@@ -94,7 +141,7 @@ async def taking_donations(
     for donation in donations:
         remain = donation.full_amount - donation.invested_amount
 
-        donation, charity_project = update_donation_and_project(
+        donation, charity_project = update_donation_for_project(
             donation, charity_project, remain_donation=remain
         )
         session.add(donation)
