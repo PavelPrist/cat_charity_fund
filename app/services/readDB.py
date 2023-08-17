@@ -25,18 +25,31 @@ async def first_project_for_investments(session: AsyncSession):
     return charity_projects.scalars().first()
 
 
-def close_project(charity_project: CharityProject):
-    charity_project.invested_amount = charity_project.full_amount
-    charity_project.fully_invested = True
-    charity_project.close_date = datetime.now()
-    return charity_project
+# def close_project(charity_project: CharityProject):
+#     charity_project.invested_amount = charity_project.full_amount
+#     charity_project.fully_invested = True
+#     charity_project.close_date = datetime.now()
+#     return charity_project
+#
+#
+# def close_donation(donation: Donation):
+#     donation.invested_amount = donation.full_amount
+#     donation.fully_invested = True
+#     donation.close_date = datetime.now()
+#     return donation
+
+def close_obj(obj):
+    obj.invested_amount = obj.full_amount
+    obj.fully_invested = True
+    obj.close_date = datetime.now()
+    return obj
 
 
-def close_donation(donation: Donation):
-    donation.invested_amount = donation.full_amount
-    donation.fully_invested = True
-    donation.close_date = datetime.now()
-    return donation
+def update_obj(obj, invested_add):
+    obj.invested_amount += invested_add
+    if obj.invested_amount >= obj.full_amount:
+        obj = close_obj(obj)
+    return obj
 
 
 async def commit_refresh_db(
