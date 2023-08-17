@@ -6,7 +6,7 @@ from app.core.user import current_user
 from app.crud.donation import donation_crud
 from app.models import User
 from app.schemas.donation import DonationCreate, DonationDb
-from app.services.money_process import donation_distribution
+from app.services.money_process import investing_process
 from app.services.readDB import commit_refresh_db
 
 router = APIRouter()
@@ -28,10 +28,6 @@ async def create_donation(
         session,
         user
     )
-    donation_new, charity_project_new, session = await donation_distribution(
-        donation, session
-    )
-    donation_end, _ = await commit_refresh_db(
-        session, charity_project=charity_project_new, donation=donation_new
-    )
-    return donation_new
+    session = await investing_process(session)
+    await commit_refresh_db(session, donation)
+    return donation

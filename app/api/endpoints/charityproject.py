@@ -6,7 +6,7 @@ from app.core.db import get_async_session
 from app.core.user import current_superuser
 from app.crud.charityproject import charity_crud
 from app.schemas.charityproject import CharityProjectCreate, CharityProjectDB
-from app.services.money_process import taking_donations
+from app.services.money_process import investing_process
 from app.services.readDB import commit_refresh_db
 
 router = APIRouter()
@@ -23,11 +23,7 @@ async def create_charity_project(
     session: AsyncSession = Depends(get_async_session),
 ) -> CharityProjectDB:
     await check_project_name_duplicate(charity_project.name, session)
-    charity_project_new = await charity_crud.create(charity_project, session)
-    charity_project_new, session = await taking_donations(
-        charity_project_new, session
-    )
-    charity_project_new, _ = await commit_refresh_db(
-        session, charity_project=charity_project_new
-    )
-    return charity_project_new
+    charity_project = await charity_crud.create(charity_project, session)
+    session = await investing_process(session)
+    await commit_refresh_db(session, charity_project)
+    return charity_project
