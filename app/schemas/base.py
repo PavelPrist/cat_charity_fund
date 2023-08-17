@@ -20,7 +20,3 @@ class BaseSchema(BaseModel):
     fully_invested: bool
     create_date: datetime = Field(..., example=FROM_TIME)
     close_date: Optional[datetime] = Field(..., example=TO_TIME)
-
-    class Config:
-        orm_mode = True
-        extra = Extra.forbid

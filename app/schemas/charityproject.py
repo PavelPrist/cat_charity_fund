@@ -21,7 +21,8 @@ class CharityProjectCreate(BaseModel):
 
 
 class CharityProjectDB(BaseSchema, CharityProjectCreate):
-    pass
+    class Config:
+        orm_mode = True
 
 
 class CharityProjectUpdate(CharityProjectCreate):
