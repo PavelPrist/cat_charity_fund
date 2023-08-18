@@ -1,6 +1,5 @@
 from sqlalchemy import Column, ForeignKey, Integer, Text
 
-from app.core.db import Base
 from app.models.base import BaseModel
 
 

@@ -62,7 +62,6 @@ class BaseCRUD:
         await session.refresh(db_obj)
         return db_obj
 
-
     async def delete(
             self,
             db_obj,

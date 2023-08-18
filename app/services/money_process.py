@@ -12,8 +12,9 @@ def update_project_and_donation(
     Функция обновления объектов при распределении пожертвований
     """
     remain_prj = (
-            charity_project.full_amount -
-            charity_project.invested_amount)
+        charity_project.full_amount -
+        charity_project.invested_amount
+    )
     remain_don = donation.full_amount - donation.invested_amount
 
     charity_project = update_obj(

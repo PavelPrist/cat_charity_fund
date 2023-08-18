@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 from typing import Optional
 
-from pydantic import BaseModel, Extra, Field, PositiveInt
+from pydantic import BaseModel, Field, PositiveInt
 
 
 FROM_TIME = (

@@ -10,6 +10,9 @@ class DonationsDb(BaseSchema):
     comment: Optional[str] = Field(None, min_length=1)
     user_id: int
 
+    class Config:
+        orm_mode = True
+
 
 class DonationCreate(BaseModel):
     full_amount: int = Field(..., ge=1)
@@ -25,6 +28,7 @@ class DonationDb(DonationCreate):
 
     class Config:
         orm_mode = True
+
 
 class DonationUserId(DonationCreate):
     id: int
