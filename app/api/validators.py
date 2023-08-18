@@ -14,7 +14,7 @@ async def check_project_name_duplicate(
     if project_id:
         raise HTTPException(
             status_code=HTTPStatus.BAD_REQUEST,
-            detail=f'Имя проекта {name} уже занято',
+            detail="Проект с таким именем уже существует!",
         )
 
 
@@ -24,7 +24,7 @@ def charity_project_can_be_delete(
     if charity_project.invested_amount > 0:
         raise HTTPException(
             status_code=HTTPStatus.BAD_REQUEST,
-            detail="Проект нельзя удалить, в него уже внесли средства",
+            detail='В проект были внесены средства, не подлежит удалению!',
         )
 
 
@@ -34,7 +34,7 @@ def charity_project_is_closed(
     if charity_project.fully_invested:
         raise HTTPException(
             status_code=HTTPStatus.BAD_REQUEST,
-            detail="Проект уже закрыт удалять нельзя",
+            detail='Закрытый проект нельзя редактировать!',
         )
 
 
