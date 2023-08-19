@@ -20,6 +20,7 @@ from app.schemas.user import UserCreate
 
 logging.basicConfig(level=logging.INFO)
 
+
 async def get_user_db(session: AsyncSession = Depends(get_async_session)):
     yield SQLAlchemyUserDatabase(session, User)
 
