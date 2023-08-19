@@ -3,6 +3,9 @@ from typing import Optional
 from pydantic import BaseSettings, EmailStr
 
 
+PASSWORD_LENGTH = 3
+
+
 class Settings(BaseSettings):
     app_title: str = 'Благотворительный фонд поддержки котиков QRKot'
     description: str = 'Помощь котейкам'

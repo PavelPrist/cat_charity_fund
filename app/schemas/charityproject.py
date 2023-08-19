@@ -12,8 +12,8 @@ class CharityProjectCreate(BaseModel):
 
     @validator('name', 'description')
     def none_and_empty_not_allowed(cls, value: str):
-        if value is None or value == '' or value.isspace():
-            raise ValueError('Поле не должно быть пустым или из пробелов')
+        if value.isspace():
+            raise ValueError('Поле не должно быть только из пробелов')
         return value
 
     class Config:

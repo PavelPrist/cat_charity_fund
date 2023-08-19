@@ -1,3 +1,4 @@
+import logging
 from typing import Optional, Union
 
 from fastapi import Depends, Request
@@ -11,11 +12,13 @@ from fastapi_users.authentication import (
 from fastapi_users_db_sqlalchemy import SQLAlchemyUserDatabase
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.config import settings
+from app.core.config import PASSWORD_LENGTH, settings
 from app.core.db import get_async_session
 from app.models import User
 from app.schemas.user import UserCreate
 
+
+logging.basicConfig(level=logging.INFO)
 
 async def get_user_db(session: AsyncSession = Depends(get_async_session)):
     yield SQLAlchemyUserDatabase(session, User)
@@ -41,7 +44,7 @@ class UserManager(IntegerIDMixin, BaseUserManager[User, int]):
         password: str,
         user: Union[UserCreate, User],
     ) -> None:
-        if len(password) < 3:
+        if len(password) < PASSWORD_LENGTH:
             raise InvalidPasswordException(
                 reason="Password should be at least 3 characters"
             )
@@ -53,7 +56,7 @@ class UserManager(IntegerIDMixin, BaseUserManager[User, int]):
     async def on_after_register(
         self, user: User, request: Optional[Request] = None
     ):
-        print(f"User {user.email} already registered.")
+        logging.info(f"User {user.email} is successfully registered.")
 
 
 async def get_user_manager(user_db=Depends(get_user_db)):

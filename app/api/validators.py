@@ -43,7 +43,7 @@ async def charity_project_exists(
         session: AsyncSession
 ) -> CharityProject:
     charity_project = await charity_crud.get(project_id, session)
-    if charity_project is None:
+    if not charity_project:
         raise HTTPException(
             status_code=HTTPStatus.NOT_FOUND,
             detail=f'Проект с id {project_id} не найден',
@@ -58,9 +58,9 @@ async def before_edit_charity_project(
 ):
     charity_project = await charity_project_exists(project_id, session)
     charity_project_is_closed(charity_project)
-    if obj_new.name is not None:
+    if obj_new.name:
         await check_project_name_duplicate(obj_new.name, session)
-    if obj_new.full_amount is not None:
+    if obj_new.full_amount:
         project_full_amount_not_less_than_invested(
             charity_project,
             obj_new,
